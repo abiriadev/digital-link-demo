@@ -12,6 +12,8 @@ importers:
         specifier: ^1.10.13
         version: 1.10.13
 
+  digital-link-rs: {}
+
   resolver:
     dependencies:
       '@nestjs/common':
@@ -23,9 +25,9 @@ importers:
       '@nestjs/platform-express':
         specifier: ^10.0.0
         version: 10.2.4(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)
-      digital-link-rs@workspace:
-        specifier: link:../digital-link-rs@workspace
-        version: link:../digital-link-rs@workspace
+      digital-link-rs:
+        specifier: workspace:^
+        version: link:../digital-link-rs
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.13
