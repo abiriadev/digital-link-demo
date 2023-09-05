@@ -1,2 +1,3 @@
 packages:
   - resolver
+  - digital-link-rs
