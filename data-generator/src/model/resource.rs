@@ -1,4 +1,4 @@
-use fake::Dummy;
+use fake::{faker::address::en::CountryCode, Dummy};
 use serde::Serialize;
 
 use super::{language::Language, link_type::LinkType, mime::Mime};
@@ -10,5 +10,7 @@ pub struct Resource {
 	titile: String,
 	language: Option<Language>,
 	media: Option<Mime>,
+
+	#[dummy(faker = "CountryCode()")]
 	context: Option<String>,
 }
