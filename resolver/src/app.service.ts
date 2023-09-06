@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	HttpException,
 	HttpStatus,
 	Injectable,
@@ -47,15 +48,13 @@ export class AppService {
 			} else {
 				console.log('not gtin:', dl.gs1_path_key)
 
-				throw new HttpException(
+				throw new BadRequestException(
 					'not supported',
-					HttpStatus.BAD_REQUEST,
 				)
 			}
 		} else {
-			throw new HttpException(
+			throw new BadRequestException(
 				'Not a valid GS1 Digital Link',
-				HttpStatus.BAD_REQUEST,
 			)
 		}
 	}
