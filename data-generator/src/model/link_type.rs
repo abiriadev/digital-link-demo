@@ -1,6 +1,7 @@
 use std::fmt::Display;
 
 use fake::Dummy;
+use serde::{Serialize, Serializer};
 use strum::IntoStaticStr;
 
 #[derive(IntoStaticStr, Dummy, Debug)]
@@ -62,6 +63,20 @@ pub enum LinkType {
 
 impl Display for LinkType {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		write!(f, "gs1:{self}")
+		let camel: &'static str = self.into();
+		write!(f, "gs1:{camel}")
 	}
+}
+
+impl Serialize for LinkType {
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+	where S: Serializer {
+		serializer.serialize_str(&self.to_string())
+	}
+}
+
+#[test]
+fn a() {
+	let a = LinkType::MenuInfogs1.to_string();
+	println!("{a}");
 }
