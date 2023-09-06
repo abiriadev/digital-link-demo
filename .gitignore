@@ -2,3 +2,8 @@ node_modules/
 .turbo
 dist
 digital-link-rs
+
+
+# Added by cargo
+
+/target
