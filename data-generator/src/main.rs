@@ -1,3 +1,17 @@
+use fake::{Dummy, Fake, Faker};
+
+#[derive(Debug, Dummy)]
+pub struct Resource {
+	url: String,
+	relation: String,
+	titile: String,
+	language: Option<String>,
+	media: Option<String>,
+	context: Option<String>,
+}
+
 fn main() {
-	println!("Hello, world!");
+	let a: Resource = Faker.fake();
+
+	println!("{a:#?}");
 }
