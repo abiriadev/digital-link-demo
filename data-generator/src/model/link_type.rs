@@ -74,9 +74,3 @@ impl Serialize for LinkType {
 		serializer.serialize_str(&self.to_string())
 	}
 }
-
-#[test]
-fn a() {
-	let a = LinkType::MenuInfogs1.to_string();
-	println!("{a}");
-}
