@@ -1,4 +1,3 @@
 mod model;
 
-pub use model::link_type::LinkType;
-pub use model::mime::Mime;
+pub use model::resource::Resource;
