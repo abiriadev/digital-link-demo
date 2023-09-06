@@ -1,4 +1,4 @@
-use data_generator::LinkType;
+use data_generator::{LinkType, Mime};
 use fake::{Dummy, Fake, Faker};
 use serde::Serialize;
 
@@ -8,7 +8,7 @@ pub struct Resource {
 	relation: LinkType,
 	titile: String,
 	language: Option<String>,
-	media: Option<String>,
+	media: Option<Mime>,
 	context: Option<String>,
 }
 
