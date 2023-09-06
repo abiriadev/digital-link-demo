@@ -1,5 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import {
+	HttpException,
+	HttpStatus,
+	Injectable,
+} from '@nestjs/common'
 import { DigitalLinkWasm } from 'digital-link-rs'
+import { Redirect } from './redirect.type'
 
 export interface Material {
 	url: string
@@ -14,11 +19,13 @@ export interface Material {
 export class AppService {
 	resolveDigitalLink(
 		path: string,
-	): string | Array<Material> {
+		linkType: string,
+	): Redirect | Array<Material> {
 		const dl = this.parseDigitalLink(path)
 
 		console.log('dl:', dl?.toJSON())
 
+		// GS1 element strings all valid?
 		if (dl) {
 			if (dl.gs1_path_key === 'gtin') {
 				const gtin = dl.gs1_path.gtin?.gtin
@@ -26,14 +33,30 @@ export class AppService {
 				if (gtin === undefined)
 					throw new Error('unreachable')
 
-				return this.queryProduct(gtin)
+				const res = this.queryProduct(gtin)
+
+				// Is a value of linkType defined?
+				if (linkType) {
+					if (linkType === 'linkset') {
+						return res
+					}
+					return res[0].url as Redirect
+				} else {
+					return res[0].url as Redirect
+				}
 			} else {
 				console.log('not gtin:', dl.gs1_path_key)
 
-				return 'not supported'
+				throw new HttpException(
+					'not supported',
+					HttpStatus.BAD_REQUEST,
+				)
 			}
 		} else {
-			return 'not found'
+			throw new HttpException(
+				'Not a valid GS1 Digital Link',
+				HttpStatus.BAD_REQUEST,
+			)
 		}
 	}
 

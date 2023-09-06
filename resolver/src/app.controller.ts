@@ -1,4 +1,10 @@
-import { Controller, Get, Query, Req } from '@nestjs/common'
+import {
+	Controller,
+	Get,
+	Query,
+	Redirect,
+	Req,
+} from '@nestjs/common'
 import { AppService, Material } from './app.service'
 import { Request } from 'express'
 
@@ -11,9 +17,20 @@ export class AppController {
 		// NOTE:: hostname is not necessary. but it is required for now. upstreams DLRS needs to be fixed
 		@Req() { url, hostname }: Request,
 		@Query('linkType') linkType: string,
-	): string | Array<Material> {
+	): { redirect: string } | Array<Material> {
 		const fullUrl = `http://${hostname}${url}`
 
-		return this.appService.resolveDigitalLink(fullUrl)
+		console.log('linktype:', linkType)
+
+		const res = this.appService.resolveDigitalLink(
+			fullUrl,
+			linkType,
+		)
+
+		if (typeof res == 'string') {
+			return {
+				redirect: res,
+			}
+		} else return res
 	}
 }
