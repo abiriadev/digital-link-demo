@@ -1,7 +1,8 @@
 use data_generator::LinkType;
 use fake::{Dummy, Fake, Faker};
+use serde::Serialize;
 
-#[derive(Debug, Dummy)]
+#[derive(Debug, Dummy, Serialize)]
 pub struct Resource {
 	url: String,
 	relation: LinkType,
@@ -14,5 +15,8 @@ pub struct Resource {
 fn main() {
 	let a: Resource = Faker.fake();
 
-	println!("{a:#?}");
+	let res = serde_json::to_string_pretty(&a).unwrap();
+
+	// println!("{a:#?}");
+	println!("{res}");
 }
