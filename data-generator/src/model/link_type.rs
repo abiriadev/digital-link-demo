@@ -1,8 +1,9 @@
 use std::fmt::Display;
 
+use fake::Dummy;
 use strum::IntoStaticStr;
 
-#[derive(IntoStaticStr)]
+#[derive(IntoStaticStr, Dummy, Debug)]
 #[strum(serialize_all = "camelCase")]
 pub enum LinkType {
 	ActivityIdeasgs1,
@@ -61,6 +62,6 @@ pub enum LinkType {
 
 impl Display for LinkType {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		write!(f, format!("gs1:{self}"))
+		write!(f, "gs1:{self}")
 	}
 }

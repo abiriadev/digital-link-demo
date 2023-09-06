@@ -1,1 +1,1 @@
-mod link_type;
+pub mod link_type;

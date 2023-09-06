@@ -1,9 +1,10 @@
+use data_generator::LinkType;
 use fake::{Dummy, Fake, Faker};
 
 #[derive(Debug, Dummy)]
 pub struct Resource {
 	url: String,
-	relation: String,
+	relation: LinkType,
 	titile: String,
 	language: Option<String>,
 	media: Option<String>,
