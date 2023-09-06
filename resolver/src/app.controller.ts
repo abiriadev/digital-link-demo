@@ -8,9 +8,12 @@ export class AppController {
 
 	@Get('*')
 	resolve(
-		@Req() { url }: Request,
+		// NOTE:: hostname is not necessary. but it is required for now. upstreams DLRS needs to be fixed
+		@Req() { url, hostname }: Request,
 		@Query('linkType') linkType: string,
 	): string {
-		return this.appService.resolveDigitalLink(url)
+		const fullUrl = `http://${hostname}${url}`
+
+		return this.appService.resolveDigitalLink(fullUrl)
 	}
 }
