@@ -6,6 +6,7 @@ use axum::{
 	routing::get,
 	Router, Server,
 };
+use maplit::hashmap;
 use sailfish::TemplateOnce;
 use tracing_subscriber::fmt::init;
 
@@ -24,20 +25,12 @@ async fn main() {
 	init();
 
 	LINK_TYPE
-		.set({
-			let mut h = HashMap::new();
-			h.insert("gs1:pip", "Product information");
-			h.insert(
-				"gs1:quickStartGuide",
-				"Quick start guide",
-			);
-			h.insert("gs1:whatsInTheBox", "What’s in the box");
-			h.insert(
-				"gs1:certificationInfo",
-				"Certification information",
-			);
-			h.insert("gs1:support", "Support");
-			h
+		.set(hashmap! {
+			"gs1:pip" => "Product information",
+			"gs1:quickStartGuide" => "Quick start guide",
+			"gs1:whatsInTheBox" => "What’s in the box",
+			"gs1:certificationInfo" => "Certification information",
+			"gs1:support" => "Support",
 		})
 		.unwrap();
 
