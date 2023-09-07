@@ -7,3 +7,5 @@ digital-link-rs
 # Added by cargo
 
 /target
+
+/database/init/data.json
