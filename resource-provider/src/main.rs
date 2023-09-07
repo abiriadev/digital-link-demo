@@ -1,5 +1,5 @@
 use axum::{
-	extract::Path,
+	extract::{Host, Path},
 	response::{Html, IntoResponse},
 	routing::get,
 	Router, Server,
@@ -10,6 +10,7 @@ use tracing_subscriber::fmt::init;
 #[derive(TemplateOnce)]
 #[template(path = "product.stpl")]
 struct ProductTemplate {
+	host: String,
 	pid: String,
 }
 
@@ -25,8 +26,11 @@ async fn main() {
 		.unwrap();
 }
 
-async fn handle_product(Path(pid): Path<String>) -> impl IntoResponse {
-	let ctx = ProductTemplate { pid };
+async fn handle_product(
+	Host(host): Host,
+	Path(pid): Path<String>,
+) -> impl IntoResponse {
+	let ctx = ProductTemplate { host, pid };
 
 	Html(ctx.render_once().unwrap())
 }
