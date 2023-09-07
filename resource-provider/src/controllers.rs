@@ -29,7 +29,16 @@ pub async fn handle_product(
 
 		Html(ctx.render_once().unwrap())
 	} else {
-		todo!()
+		let ctx = NotFoundTemplate {
+			link_types: LINK_TYPE
+				.get()
+				.unwrap()
+				.keys()
+				.map(|s| *s)
+				.collect::<Vec<_>>(),
+		};
+
+		Html(ctx.render_once().unwrap())
 	}
 }
 
