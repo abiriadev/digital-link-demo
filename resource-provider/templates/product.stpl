@@ -2,7 +2,7 @@
 <html>
   <title>Product - <%= pid %></title>
   <body>
-    <h1>Product Page for <%= pid %></h1>
+    <h1><%= link_type %> Page for <%= pid %></h1>
     <h2>(Manufacturer <%= host %>)</h2>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tellus orci, blandit ut ante pretium, condimentum gravida justo. Donec accumsan lectus quis tincidunt iaculis. Praesent placerat enim consequat erat ullamcorper luctus. Fusce in massa a neque viverra venenatis imperdiet aliquet lorem. Integer cursus diam maximus facilisis sagittis. Morbi eleifend lorem non nisi finibus mollis eu nec justo. Nulla facilisi.</p>
     <p>Quisque pulvinar sem ipsum, at pulvinar mi pulvinar vitae. Vivamus tristique mattis mattis. Praesent lacinia mauris mi, eu venenatis lacus ultrices vel. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas vel blandit libero. Nulla dignissim lectus quis tincidunt auctor. Fusce eget nunc id nisl egestas hendrerit non sed odio. Cras rutrum nisi vitae posuere suscipit. Pellentesque felis enim, varius sit amet placerat ut, pulvinar at ex. Phasellus sit amet risus at dui efficitur sollicitudin.</p>

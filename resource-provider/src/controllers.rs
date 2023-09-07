@@ -14,17 +14,23 @@ pub async fn handle_product(
 	Path(linktype): Path<String>,
 	Path(pid): Path<String>,
 ) -> impl IntoResponse {
-	if let Some(linktype) = LINK_TYPE
+	if let Some(link_type) = LINK_TYPE
 		.get()
 		.unwrap()
 		.get(linktype.as_str())
 	{
-		let _title = linktype.get("en").unwrap();
+		let link_type = link_type.get("en").unwrap();
+
+		let ctx = ProductTemplate {
+			host,
+			pid,
+			link_type,
+		};
+
+		Html(ctx.render_once().unwrap())
+	} else {
+		todo!()
 	}
-
-	let ctx = ProductTemplate { host, pid };
-
-	Html(ctx.render_once().unwrap())
 }
 
 pub async fn handle_404() -> impl IntoResponse {

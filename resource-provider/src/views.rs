@@ -3,6 +3,7 @@ use sailfish::TemplateOnce;
 #[derive(TemplateOnce)]
 #[template(path = "product.stpl")]
 pub struct ProductTemplate {
+	pub link_type: &'static str,
 	pub host: String,
 	pub pid: String,
 }
