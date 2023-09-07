@@ -14,8 +14,10 @@ model Resource {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
   url      String
   relation String
-  titile   String
+  title    String
   language String?
   media    String?
   context  String?
+
+  @@map("resource")
 }
