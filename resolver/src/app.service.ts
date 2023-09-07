@@ -3,6 +3,7 @@ import {
 	HttpException,
 	HttpStatus,
 	Injectable,
+	NotFoundException,
 } from '@nestjs/common'
 import { DigitalLinkWasm } from 'digital-link-rs'
 import { Redirect } from './redirect.type'
@@ -42,27 +43,74 @@ export class AppService {
 
 				console.log('res:', res)
 
-				// Is a value of linkType defined?
-				if (linkType) {
-					if (linkType === 'linkset') {
-						return res
-					}
-					return res[0].url as Redirect
-				} else {
-					return res[0].url as Redirect
-				}
-			} else {
-				console.log('not gtin:', dl.gs1_path_key)
+				// Do we have any records for this primary key?
+				if (res.length >= 1) {
+					const def = res.find(
+						resource =>
+							resource.relation ===
+							'gs1:default',
+					)
 
+					if (def === undefined)
+						throw new NotFoundException(
+							`Err: gtin ${gtin} has matching resources but not have default one.`,
+						)
+
+					// Is a value of linkType defined?
+					if (
+						linkType &&
+						(linkType === 'linkset' ||
+							res.find(
+								r =>
+									r.relation === linkType,
+							))
+					) {
+						if (linkType === 'linkset') {
+							// TODO: use linkset formatter
+							return res
+						} else {
+							return (
+								res.find(
+									r =>
+										r.relation ===
+										linkType,
+								) as Material
+							).url as Redirect // assert!
+						}
+					} else {
+						// default(s)
+						if (
+							res.find(
+								r =>
+									r.relation ===
+									'gs1:default*',
+							)
+						) {
+							// todo
+							return (
+								res.find(
+									r =>
+										r.relation ===
+										'gs1:default*',
+								) as Material
+							).url as Redirect // assert!
+						} else return def.url as Redirect
+					}
+				} else {
+					// TODO: can we redirect to another resolver?
+
+					throw new NotFoundException(
+						`item with GTIN ${gtin} not found`,
+					)
+				}
+			} else
 				throw new BadRequestException(
-					'not supported',
+					`not supported primary key: ${dl.gs1_path_key}`,
 				)
-			}
-		} else {
+		} else
 			throw new BadRequestException(
 				'Not a valid GS1 Digital Link',
 			)
-		}
 	}
 
 	parseDigitalLink(
@@ -76,9 +124,13 @@ export class AppService {
 	async queryProduct(
 		gtin: string,
 	): Promise<Array<Material>> {
-		console.log('query: ', gtin)
-
-		return (await this.prisma.resource.findMany()).map(
+		return (
+			await this.prisma.resource.findMany({
+				where: {
+					gtin,
+				},
+			})
+		).map(
 			({
 				url,
 				media,
