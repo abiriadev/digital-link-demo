@@ -1,0 +1,10 @@
+services:
+  db:
+    image: mongo:7.0.1-jammy
+    ports:
+      - 27017:27017
+    volumes:
+      - type: bind
+        source: ./database/init/
+        target: /docker-entrypoint-initdb.d/
+        read_only: true
