@@ -1,5 +1,33 @@
 {
 	"resolverRoot": "https://abiria-lt-arch.local:3000",
 	"supportedPrimaryKeys": ["01"],
-	"name": "Aipim GS1 Digital Link resolver demo"
+	"name": "Aipim GS1 Digital Link resolver demo",
+	"supportedLinkType": [
+		{
+			"namespace": "http://gs1.org/voc/",
+			"prefix": "gs1:"
+		},
+		{
+			"namespace": "http://schema.org/",
+			"prefix": "schema:"
+		}
+	],
+	"linkTypeDefaultCanBeLinkset": false,
+	"supportedContextValuesEnumerated": [
+		"KR",
+		"US",
+		"BK",
+		"FR"
+	],
+	"validatesAIcombinations": false,
+	"contact": {
+		"fn": "GS1 AISBL",
+		"hasAddress": {
+			"streetAddress": "Avenue Louise 326",
+			"locality": "Brussels",
+			"country-name": "Belgium",
+			"postal-code": "1050"
+		},
+		"hasTelepone": "tel:+32 2 788 78 00"
+	}
 }
