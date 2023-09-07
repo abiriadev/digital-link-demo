@@ -18,11 +18,12 @@ export class AppController {
 	}
 
 	@Get('*')
+	@Redirect(undefined, 307)
 	async resolve(
 		// NOTE:: hostname is not necessary. but it is required for now. upstreams DLRS needs to be fixed
 		@Req() { url, hostname }: Request,
 		@Query('linkType') linkType: string,
-	): Promise<{ redirect: string } | Array<Material>> {
+	): Promise<{ url: string } | Array<Material>> {
 		console.log('url:', url)
 
 		const fullUrl = `http://${hostname}${url}`
@@ -35,7 +36,7 @@ export class AppController {
 
 		if (typeof res == 'string') {
 			return {
-				redirect: res,
+				url: res,
 			}
 		} else return res
 	}
