@@ -12,6 +12,7 @@ datasource db {
 
 model Resource {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  gtin     String
   url      String
   relation String
   title    String
