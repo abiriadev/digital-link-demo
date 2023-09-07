@@ -9,3 +9,5 @@ digital-link-rs
 /target
 
 /database/init/data.json
+
+.env
