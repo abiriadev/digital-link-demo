@@ -6,11 +6,12 @@ import {
 } from '@nestjs/common'
 import { DigitalLinkWasm } from 'digital-link-rs'
 import { Redirect } from './redirect.type'
+import { PrismaService } from 'nestjs-prisma'
 
 export interface Material {
 	url: string
 	relation: string
-	titile: string
+	title: string
 	language?: string
 	media?: string
 	context?: string
@@ -18,10 +19,12 @@ export interface Material {
 
 @Injectable()
 export class AppService {
-	resolveDigitalLink(
+	constructor(private prisma: PrismaService) {}
+
+	async resolveDigitalLink(
 		path: string,
 		linkType: string,
-	): Redirect | Array<Material> {
+	): Promise<Redirect | Array<Material>> {
 		const dl = this.parseDigitalLink(path)
 
 		console.log('dl:', dl?.toJSON())
@@ -34,7 +37,9 @@ export class AppService {
 				if (gtin === undefined)
 					throw new Error('unreachable')
 
-				const res = this.queryProduct(gtin)
+				const res = await this.queryProduct(gtin)
+
+				console.log('res:', res)
 
 				// Is a value of linkType defined?
 				if (linkType) {
@@ -67,18 +72,27 @@ export class AppService {
 		return DigitalLinkWasm.try_from_str(rawUrl)
 	}
 
-	queryProduct(gtin: string): Array<Material> {
+	async queryProduct(
+		gtin: string,
+	): Promise<Array<Material>> {
 		console.log('query: ', gtin)
 
-		return [
-			{
-				url: 'https://example.com/',
-				relation: 'pip',
-				titile: 'Example Title',
-				language: 'ko',
-				media: 'text/json',
-				context: 'KR',
-			},
-		]
+		return (await this.prisma.resource.findMany()).map(
+			({
+				url,
+				media,
+				title,
+				context,
+				language,
+				relation,
+			}) => ({
+				url,
+				relation,
+				title,
+				media: media ?? undefined,
+				context: context ?? undefined,
+				language: language ?? undefined,
+			}),
+		)
 	}
 }
