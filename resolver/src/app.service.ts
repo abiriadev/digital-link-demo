@@ -1,7 +1,5 @@
 import {
 	BadRequestException,
-	HttpException,
-	HttpStatus,
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common'
@@ -26,7 +24,7 @@ export class AppService {
 	async resolveDigitalLink(
 		path: string,
 		linkType: string,
-	): Promise<Redirect | Array<Material>> {
+	): Promise<Redirect | LinkSetLd> {
 		const dl = this.parseDigitalLink(path)
 
 		console.log('dl:', dl?.toJSON())
@@ -67,7 +65,9 @@ export class AppService {
 					) {
 						if (linkType === 'linkset') {
 							// TODO: use linkset formatter
-							return res
+							return this.produceLinkSetAsJsonLd(
+								res,
+							)
 						} else {
 							return (
 								res.find(
@@ -158,7 +158,45 @@ export class AppService {
 			).toString(),
 		) as Rdf
 	}
+
+	produceLinkSetAsJsonLd(a: Array<Material>): LinkSetLd {
+		const o: LinkSetLd = {}
+
+		for (const m of a) {
+			const wv = this.linkTypeToWebVoc(m.relation)
+			if (!(wv in o)) o[wv] = []
+
+			o[wv].push({
+				'@id': m.url,
+				'http://purl.org/dc/terms/title': m.title,
+				'http://purl.org/dc/terms/language':
+					m.language,
+				'http://purl.org/dc/terms/mime': m.media,
+				'https://gs1.org/voc/context': m.context,
+			})
+		}
+
+		return o
+	}
+
+	linkTypeToWebVoc(lt: string): string {
+		return lt.replace(
+			/gs1:(.*)/,
+			'http://gs1.org/voc/$1',
+		)
+	}
 }
+
+export type LinkSetLd = Record<
+	string,
+	Array<{
+		'@id': string
+		'http://purl.org/dc/terms/title': string
+		'http://purl.org/dc/terms/language'?: string
+		'http://purl.org/dc/terms/mime'?: string
+		'https://gs1.org/voc/context'?: string
+	}>
+>
 
 export interface Rdf {
 	resolverRoot: string

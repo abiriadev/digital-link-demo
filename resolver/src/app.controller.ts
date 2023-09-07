@@ -5,7 +5,7 @@ import {
 	Redirect,
 	Req,
 } from '@nestjs/common'
-import { AppService, Material, Rdf } from './app.service'
+import { AppService, LinkSetLd, Rdf } from './app.service'
 import { Request } from 'express'
 
 @Controller()
@@ -23,7 +23,7 @@ export class AppController {
 		// NOTE:: hostname is not necessary. but it is required for now. upstreams DLRS needs to be fixed
 		@Req() { url, hostname }: Request,
 		@Query('linkType') linkType: string,
-	): Promise<{ url: string } | Array<Material>> {
+	): Promise<{ url: string } | LinkSetLd> {
 		console.log('url:', url)
 
 		const fullUrl = `http://${hostname}${url}`
