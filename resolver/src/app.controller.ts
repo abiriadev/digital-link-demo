@@ -12,22 +12,20 @@ import { Request } from 'express'
 export class AppController {
 	constructor(private readonly appService: AppService) {}
 
+	@Get('.well-known/gs1resolver')
+	async rdf(): Promise<Rdf> {
+		return await this.appService.getRdf()
+	}
+
 	@Get('*')
 	async resolve(
 		// NOTE:: hostname is not necessary. but it is required for now. upstreams DLRS needs to be fixed
 		@Req() { url, hostname }: Request,
 		@Query('linkType') linkType: string,
-	): Promise<
-		{ redirect: string } | Array<Material> | Rdf
-	> {
+	): Promise<{ redirect: string } | Array<Material>> {
 		console.log('url:', url)
-		if (url === '/.well-known/gs1resolver') {
-			return await this.appService.getRdf()
-		}
 
 		const fullUrl = `http://${hostname}${url}`
-
-		console.log('linktype:', linkType)
 
 		const res =
 			await this.appService.resolveDigitalLink(
