@@ -1,0 +1,5 @@
+{
+	"resolverRoot": "https://abiria-lt-arch.local:3000",
+	"supportedPrimaryKeys": ["01"],
+	"name": "Aipim GS1 Digital Link resolver demo"
+}

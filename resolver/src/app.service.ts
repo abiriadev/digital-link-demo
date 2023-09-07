@@ -7,6 +7,7 @@ import {
 import { DigitalLinkWasm } from 'digital-link-rs'
 import { Redirect } from './redirect.type'
 import { PrismaService } from 'nestjs-prisma'
+import { readFile } from 'fs/promises'
 
 export interface Material {
 	url: string
@@ -95,4 +96,27 @@ export class AppService {
 			}),
 		)
 	}
+
+	async getRdf(): Promise<Rdf> {
+		return JSON.parse(
+			(
+				await readFile(
+					'public/resolver-description.json',
+				)
+			).toString(),
+		) as Rdf
+	}
+}
+
+export interface Rdf {
+	resolverRoot: string
+	supportedPrimaryKeys: Array<string>
+	name?: string
+	linkTypeDefaultCanBeLinkset?: boolean
+	supportedContextValuesEnumerated?: Array<string>
+	supportsSemanticInterpretation?: boolean
+	validatesAIcombination?: boolean
+	extension_profile?: string
+	dataDump?: string
+	jsonLdContextLocation?: string
 }
