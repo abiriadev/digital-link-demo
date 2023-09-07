@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+	<title>404 Not Found</title>
+	<body>
+		<h1>404</h1>
+		<h2>Supported LinkTypes:</h2>
+		<ul>
+			<% for link_type in link_types.iter() { %>
+			  <li><%= link_type %></div>
+			<% } %>
+		</ul>
+	</body>
+</html>

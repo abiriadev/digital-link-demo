@@ -21,6 +21,12 @@ struct ProductTemplate {
 	pid: String,
 }
 
+#[derive(TemplateOnce)]
+#[template(path = "404.stpl")]
+struct NotFoundTemplate {
+	link_types: Vec<&'static str>,
+}
+
 #[tokio::main]
 async fn main() {
 	init();
@@ -69,4 +75,15 @@ async fn handle_product(
 	Html(ctx.render_once().unwrap())
 }
 
-async fn handle_404() -> impl IntoResponse { "404" }
+async fn handle_404() -> impl IntoResponse {
+	let ctx = NotFoundTemplate {
+		link_types: LINK_TYPE
+			.get()
+			.unwrap()
+			.keys()
+			.map(|s| *s)
+			.collect::<Vec<_>>(),
+	};
+
+	Html(ctx.render_once().unwrap())
+}
