@@ -4,7 +4,14 @@ use axum::{
 	routing::get,
 	Router, Server,
 };
+use sailfish::TemplateOnce;
 use tracing_subscriber::fmt::init;
+
+#[derive(TemplateOnce)]
+#[template(path = "product.stpl")]
+struct ProductTemplate {
+	pid: String,
+}
 
 #[tokio::main]
 async fn main() {
@@ -19,5 +26,7 @@ async fn main() {
 }
 
 async fn handle_product(Path(pid): Path<String>) -> impl IntoResponse {
-	Html(format!("<h1>Product: {}</h1>", pid))
+	let ctx = ProductTemplate { pid };
+
+	Html(ctx.render_once().unwrap())
 }
