@@ -11,8 +11,7 @@ use crate::{
 
 pub async fn handle_product(
 	Host(host): Host,
-	Path(linktype): Path<String>,
-	Path(pid): Path<String>,
+	Path((linktype, pid)): Path<(String, String)>,
 ) -> impl IntoResponse {
 	if let Some(link_type) = LINK_TYPE
 		.get()
