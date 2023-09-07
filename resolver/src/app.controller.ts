@@ -34,10 +34,6 @@ export class AppController {
 				linkType,
 			)
 
-		if (typeof res == 'string') {
-			return {
-				url: res,
-			}
-		} else return res
+		return typeof res === 'string' ? { url: res } : res
 	}
 }
