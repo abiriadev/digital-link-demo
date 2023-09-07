@@ -19,7 +19,7 @@ async fn main() {
 	init_once();
 
 	let app = Router::new()
-		.route("/:pid", get(handle_product))
+		.route("/:linktype/:pid", get(handle_product))
 		.fallback(handle_404);
 
 	Server::bind(&"0.0.0.0:3535".parse().unwrap())

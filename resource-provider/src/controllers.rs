@@ -11,8 +11,17 @@ use crate::{
 
 pub async fn handle_product(
 	Host(host): Host,
+	Path(linktype): Path<String>,
 	Path(pid): Path<String>,
 ) -> impl IntoResponse {
+	if let Some(linktype) = LINK_TYPE
+		.get()
+		.unwrap()
+		.get(linktype.as_str())
+	{
+		let _title = linktype.get("en").unwrap();
+	}
+
 	let ctx = ProductTemplate { host, pid };
 
 	Html(ctx.render_once().unwrap())
