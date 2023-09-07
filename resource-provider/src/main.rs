@@ -18,7 +18,9 @@ struct ProductTemplate {
 async fn main() {
 	init();
 
-	let app = Router::new().route("/:pid", get(handle_product));
+	let app = Router::new()
+		.route("/:pid", get(handle_product))
+		.fallback(handle_404);
 
 	Server::bind(&"0.0.0.0:3535".parse().unwrap())
 		.serve(app.into_make_service())
@@ -34,3 +36,5 @@ async fn handle_product(
 
 	Html(ctx.render_once().unwrap())
 }
+
+async fn handle_404() -> impl IntoResponse { "404" }
