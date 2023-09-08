@@ -2,11 +2,11 @@ import {
 	Controller,
 	Get,
 	Query,
-	Redirect,
 	Req,
+	Res,
 } from '@nestjs/common'
 import { AppService, LinkSetLd, Rdf } from './app.service'
-import { Request } from 'express'
+import { Request, Response } from 'express'
 
 @Controller()
 export class AppController {
@@ -18,12 +18,12 @@ export class AppController {
 	}
 
 	@Get('*')
-	@Redirect(undefined, 307)
 	async resolve(
 		// NOTE:: hostname is not necessary. but it is required for now. upstreams DLRS needs to be fixed
 		@Req() { url, hostname }: Request,
+		@Res() response: Response,
 		@Query('linkType') linkType: string,
-	): Promise<{ url: string } | LinkSetLd> {
+	): Promise<void> {
 		console.log('url:', url)
 
 		const fullUrl = `http://${hostname}${url}`
@@ -34,6 +34,14 @@ export class AppController {
 				linkType,
 			)
 
-		return typeof res === 'string' ? { url: res } : res
+		console.log('final res:', res)
+
+		if (typeof res === 'string') {
+			console.log('redirect')
+			response.redirect(res)
+		} else {
+			console.log('return linkset!')
+			response.json(res)
+		}
 	}
 }
