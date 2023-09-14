@@ -17,6 +17,9 @@ importers:
       '@tauri-apps/api':
         specifier: ^1.4.0
         version: 1.4.0
+      html5-qrcode:
+        specifier: ^2.3.8
+        version: 2.3.8
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -3437,6 +3440,10 @@ packages:
   /html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
     dev: true
+
+  /html5-qrcode@2.3.8:
+    resolution: {integrity: sha512-jsr4vafJhwoLVEDW3n1KvPnCCXWaQfRng0/EEYk1vNcQGcG/htAdhJX0be8YyqMoSz7+hZvOZSTAepsabiuhiQ==}
+    dev: false
 
   /http-errors@2.0.0:
     resolution: {integrity: sha512-FtwrG/euBzaEjYeRqOgly7G0qviiXoJWnvEH2Z1plBdXgbyjv34pHTSb9zoeHMyDy33+DWy5Wt9Wo+TURtOYSQ==}
