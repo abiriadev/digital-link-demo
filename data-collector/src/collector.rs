@@ -4,7 +4,7 @@ use rayon::prelude::{
 	IntoParallelIterator, IntoParallelRefIterator, ParallelIterator,
 };
 
-use crate::models::{CatalogRequest, ProductRequest, ResolveRequest};
+use crate::models::{catalog::CatalogRequest, ProductRequest, ResolveRequest};
 
 #[derive(Debug)]
 pub struct Collector {
