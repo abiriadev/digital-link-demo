@@ -1,3 +1,3 @@
 [workspace]
-members = ["data-generator", "resource-provider"]
+members = ["data-generator", "resource-provider", "data-collector"]
 resolver = "2"
