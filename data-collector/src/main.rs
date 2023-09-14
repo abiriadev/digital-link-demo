@@ -1,6 +1,9 @@
 use std::fs::read_to_string;
 
-use anyhow::bail;
+use rayon::{
+	prelude::{IntoParallelIterator, ParallelIterator},
+	str::ParallelString,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize)]
@@ -68,11 +71,12 @@ fn main() -> anyhow::Result<()> {
 
 	let v = read_to_string("./categories.txt")?
 		.trim_end()
-		.split('\n')
+		.par_split('\n')
 		.flat_map(|req| {
 			collector
 				.parse_goods_list(req)
-				.into_iter()
+				.unwrap()
+				.into_par_iter()
 		})
 		.collect::<Vec<_>>();
 
