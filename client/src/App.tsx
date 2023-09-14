@@ -4,6 +4,7 @@ import { Html5Qrcode } from 'html5-qrcode'
 
 function App() {
 	const [blob, setBlob] = useState<Blob | null>(null)
+	const [link, setLink] = useState<string | null>(null)
 
 	const qr = useRef<Html5Qrcode | null>(null)
 
@@ -35,23 +36,38 @@ function App() {
 						false,
 					)
 
+					if (!res) return
+
+					setLink(res)
+
 					console.log(res)
 				} catch {}
 			}}
 		>
-			<h1>Welcome to Tauri!</h1>
+			<h1>GS1 Digital Link Smart Client Demo</h1>
 
 			<img
 				src={
-					blob
-						? window.URL.createObjectURL(blob)
-						: undefined
+					blob === null
+						? '#'
+						: window.URL.createObjectURL(blob)
 				}
 				width={300}
 				style={{
 					margin: '0 auto',
 				}}
 			></img>
+
+			<button
+				onClick={() => {
+					setBlob(null)
+					setLink(null)
+				}}
+			>
+				reset image
+			</button>
+
+			{link && <h1>Decoded Link: {link}</h1>}
 
 			<div id="qr"></div>
 		</div>
