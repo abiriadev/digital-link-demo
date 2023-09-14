@@ -1,8 +1,6 @@
 use nipper::Document;
 use ureq::Response;
 
-use self::catalog::CatalogParserProduct;
-
 pub trait ResolveRequest {
 	type Output;
 
@@ -19,7 +17,7 @@ pub mod catalog {
 	use serde::Deserialize;
 	use ureq::Response;
 
-	use super::{ProductRequest, ResolveRequest};
+	use super::{product::ProductRequest, ResolveRequest};
 
 	#[derive(Debug)]
 	pub struct Catalog {
@@ -76,30 +74,40 @@ pub mod catalog {
 	}
 }
 
-#[derive(Debug)]
-pub struct ProductRequest {
-	pub mdl_nm: String,
-	pub goods_id: String,
-}
+pub mod product {
+	use super::{catalog::CatalogParserProduct, Manual};
 
-impl From<CatalogParserProduct> for ProductRequest {
-	fn from(value: CatalogParserProduct) -> Self {
-		let CatalogParserProduct {
-			mdl_nm,
-			goods_id,
-			goods_detail_url,
-		} = value;
+	#[derive(Debug)]
+	pub struct Product {
+		pub name: String,
+		pub image: String,
+		pub url: String,
+		pub manuals: Vec<Manual>,
+	}
 
-		Self { mdl_nm, goods_id }
+	#[derive(Debug)]
+	pub struct ProductRequest {
+		pub mdl_nm: String,
+		pub goods_id: String,
+	}
+
+	impl From<CatalogParserProduct> for ProductRequest {
+		fn from(value: CatalogParserProduct) -> Self {
+			let CatalogParserProduct {
+				mdl_nm,
+				goods_id,
+				goods_detail_url,
+			} = value;
+
+			Self { mdl_nm, goods_id }
+		}
 	}
 }
 
 #[derive(Debug)]
-pub struct Product {
+pub struct Manual {
 	pub name: String,
-	pub image: String,
-	pub url: String,
-	pub manuals: Vec<Manual>,
+	pub href: String,
 }
 
 #[derive(Debug)]
@@ -138,10 +146,4 @@ impl ResolveRequest for ManualRequest {
 			})
 			.collect())
 	}
-}
-
-#[derive(Debug)]
-pub struct Manual {
-	pub name: String,
-	pub href: String,
 }
