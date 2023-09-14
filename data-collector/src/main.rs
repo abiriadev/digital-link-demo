@@ -1,16 +1,12 @@
 use std::fs::read_to_string;
 
+use anyhow::Ok;
 use indicatif::{ParallelProgressIterator, ProgressBar};
+use nipper::Document;
 use rayon::prelude::{
 	IntoParallelIterator, IntoParallelRefIterator, ParallelIterator,
 };
-use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Serialize)]
-struct GoodsListRequestBody {
-	page: u32,
-	rows: u32,
-}
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 struct GoodsList {
@@ -20,14 +16,39 @@ struct GoodsList {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all(deserialize = "camelCase"))]
 struct Goods {
-	grp_path: String,
+	// grp_path: String,
+	mdl_nm: String,
+	mdl_code: String,
+	goods_id: String,
+	goods_nm: String,
+	goods_detail_url: String,
 }
 
 #[derive(Debug)]
-struct PipRequest(String);
+struct PipRequest {
+	// category: String,
+	// grp_path: String,
+	mdl_nm: String,
+	mdl_code: String,
+	goods_id: String,
+	goods_nm: String,
+	goods_detail_url: String,
+}
 
 #[derive(Deserialize)]
 struct Pip {}
+
+#[derive(Debug)]
+struct ManualRequest {
+	mdl_nm: String,
+	goods_id: String,
+}
+
+#[derive(Debug)]
+struct Manual {
+	name: String,
+	href: String,
+}
 
 #[derive(Debug)]
 struct Collector {
@@ -70,7 +91,56 @@ impl Collector {
 		Ok(goods_list
 			.products
 			.into_iter()
-			.map(|goods| PipRequest(goods.grp_path))
+			.map(
+				|Goods {
+				     mdl_code,
+				     goods_detail_url,
+				     mdl_nm,
+				     goods_id,
+				     goods_nm,
+				 }| PipRequest {
+					mdl_code,
+					goods_detail_url,
+					mdl_nm,
+					goods_id,
+					goods_nm,
+				},
+			)
+			.collect())
+	}
+
+	fn parse_manual(
+		&self,
+		manual_request: ManualRequest,
+	) -> anyhow::Result<Vec<Manual>> {
+		let manual = ureq::post(&format!(
+			"{}/sec/xhr/goods/goodsManual",
+			self.base_url
+		))
+		.set("Referer", "https://www.samsung.com/")
+		.send_form(&[
+			("goodsId", &manual_request.goods_id),
+			("mdlNm", &manual_request.mdl_nm),
+		])?
+		.into_string()?;
+
+		let document = Document::from(&manual);
+
+		Ok(document
+			.select(r"li")
+			.iter()
+			.map(|li| Manual {
+				name: li
+					.select("strong.name")
+					.text()
+					.trim()
+					.to_string(),
+				href: li
+					.select("a.btn-download")
+					.attr("href")
+					.unwrap()
+					.to_string(),
+			})
 			.collect())
 	}
 
