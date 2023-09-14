@@ -1,8 +1,24 @@
-use nipper::Document;
-use serde::Deserialize;
+use std::fs::read_to_string;
 
-#[derive(Debug)]
-struct GoodsListRequest(String);
+use anyhow::bail;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize)]
+struct GoodsListRequestBody {
+	page: u32,
+	rows: u32,
+}
+
+#[derive(Debug, Deserialize)]
+struct GoodsList {
+	products: Vec<Goods>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all(deserialize = "camelCase"))]
+struct Goods {
+	grp_path: String,
+}
 
 #[derive(Debug)]
 struct PipRequest(String);
@@ -16,37 +32,50 @@ struct Collector {
 }
 
 impl Collector {
-	fn parse_root(&self) -> anyhow::Result<Vec<GoodsListRequest>> {
-		Ok(Document::from(
-			&ureq::get(&format!("{}/sec", self.base_url))
-				.call()?
-				.into_string()?,
-		)
-		.select("#footer > div:nth-child(2) > nav > ul > li")
-		.iter()
-		.take(2)
-		.flat_map(|li| li.select("ul > li > a").iter())
-		.map(|a| {
-			a.attr("data-omni")
-				.unwrap()
-				.split_once('_')
-				.unwrap()
-				.1
-				.to_owned()
-		})
-		.map(GoodsListRequest)
-		.collect::<Vec<_>>())
+	fn parse_goods_list(
+		&self,
+		goods_list_request: &str,
+	) -> anyhow::Result<Vec<PipRequest>> {
+		let goods_list = ureq::post(&format!(
+			"{}/sec/xhr/pf/goodsList",
+			self.base_url
+		))
+		.set("Referer", "https://www.samsung.com/")
+		.send_form(&[
+			("dispClsfNo", goods_list_request),
+			("page", "1"),
+			("rows", "1000"),
+		])?;
+
+		let goods_list = goods_list
+			.into_json::<GoodsList>()
+			.unwrap();
+
+		println!("got!: {goods_list_request}");
+
+		Ok(goods_list
+			.products
+			.into_iter()
+			.map(|goods| PipRequest(goods.grp_path))
+			.collect())
 	}
 }
 
 fn main() -> anyhow::Result<()> {
-	println!("Hello, world!");
-
 	let collector = Collector {
 		base_url: "https://www.samsung.com".to_owned(),
 	};
 
-	let v = collector.parse_root()?;
+	let v = read_to_string("./categories.txt")?
+		.trim_end()
+		.split('\n')
+		.flat_map(|req| {
+			collector
+				.parse_goods_list(req)
+				.into_iter()
+		})
+		.collect::<Vec<_>>();
+
 	println!("{v:#?}");
 
 	Ok(())
