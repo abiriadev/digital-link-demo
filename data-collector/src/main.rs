@@ -36,6 +36,13 @@ struct Collector {
 }
 
 impl Collector {
+	fn new(base_url: String) -> anyhow::Result<Self> {
+		Ok(Self {
+			base_url,
+			pb: ProgressBar::new(0),
+		})
+	}
+
 	fn parse_goods_list(
 		&self,
 		goods_list_request: &str,
@@ -66,32 +73,30 @@ impl Collector {
 			.map(|goods| PipRequest(goods.grp_path))
 			.collect())
 	}
+
+	fn fetch(&self, categories: &[&str]) -> Vec<PipRequest> {
+		self.pb
+			.set_length(categories.len() as u64);
+
+		categories
+			.par_iter()
+			.map(|req| self.parse_goods_list(req).unwrap())
+			.progress_with(self.pb.clone())
+			.flat_map(IntoParallelIterator::into_par_iter)
+			.collect::<Vec<_>>()
+	}
 }
 
 fn main() -> anyhow::Result<()> {
+	let collector = Collector::new("https://www.samsung.com".to_owned())?;
+
 	let categories = read_to_string("./categories.txt")?;
 	let categories = categories
 		.trim_end()
 		.split('\n')
 		.collect::<Vec<_>>();
 
-	let pb = ProgressBar::new(categories.len() as u64);
-
-	let collector = Collector {
-		base_url: "https://www.samsung.com".to_owned(),
-		pb: pb.clone(),
-	};
-
-	let v = categories
-		.par_iter()
-		.progress_with(pb)
-		.flat_map(|req| {
-			collector
-				.parse_goods_list(req)
-				.unwrap()
-				.into_par_iter()
-		})
-		.collect::<Vec<_>>();
+	let v = collector.fetch(&categories);
 
 	println!("{v:#?}");
 
