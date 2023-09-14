@@ -5,7 +5,7 @@ use rayon::prelude::{
 };
 
 use crate::models::{
-	catalog::CatalogRequest, product::ProductRequest, ResolveRequest,
+	catalog::CatalogRequest, product::Product, ResolveRequest,
 };
 
 #[derive(Debug)]
@@ -22,7 +22,7 @@ impl Collector {
 		})
 	}
 
-	pub fn resolve(&self, categories: &[&str]) -> Vec<ProductRequest> {
+	pub fn resolve(&self, categories: &[&str]) -> Vec<Product> {
 		self.pb
 			.set_length(categories.len() as u64);
 
@@ -34,7 +34,7 @@ impl Collector {
 			.map(|c| {
 				c.product_request
 					.into_par_iter()
-					.map(|a| a)
+					.map(|p| Product::resolve(p, &self.base_url))
 			})
 			.flatten()
 			.collect::<Vec<_>>()

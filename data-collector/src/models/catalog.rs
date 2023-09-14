@@ -1,11 +1,11 @@
 use serde::Deserialize;
 use ureq::Response;
 
-use super::{product::ProductRequest, ResolveRequest};
+use super::ResolveRequest;
 
 #[derive(Debug)]
 pub struct Catalog {
-	pub product_request: Vec<ProductRequest>,
+	pub product_request: Vec<CatalogParserProduct>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -16,9 +16,18 @@ pub struct CatalogParser {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all(deserialize = "camelCase"))]
 pub struct CatalogParserProduct {
+	// uid
+	pub mdl_code: String,
+	// required for manual
 	pub mdl_nm: String,
+	// required for manual
 	pub goods_id: String,
+	// human readable name
+	pub goods_nm: String,
+	// for pip
 	pub goods_detail_url: String,
+	// sample image
+	pub img_path1: String,
 }
 
 #[derive(Debug)]
