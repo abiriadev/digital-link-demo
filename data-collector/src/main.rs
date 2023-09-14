@@ -1,8 +1,8 @@
 use std::fs::read_to_string;
 
-use rayon::{
-	prelude::{IntoParallelIterator, ParallelIterator},
-	str::ParallelString,
+use indicatif::{ParallelProgressIterator, ProgressBar};
+use rayon::prelude::{
+	IntoParallelIterator, IntoParallelRefIterator, ParallelIterator,
 };
 use serde::{Deserialize, Serialize};
 
@@ -32,6 +32,7 @@ struct Pip {}
 #[derive(Debug)]
 struct Collector {
 	base_url: String,
+	pb: ProgressBar,
 }
 
 impl Collector {
@@ -50,11 +51,14 @@ impl Collector {
 			("rows", "1000"),
 		])?;
 
+		self.pb.println(format!(
+			"fetched category:\t{}",
+			goods_list_request
+		));
+
 		let goods_list = goods_list
 			.into_json::<GoodsList>()
 			.unwrap();
-
-		println!("got!: {goods_list_request}");
 
 		Ok(goods_list
 			.products
@@ -65,13 +69,22 @@ impl Collector {
 }
 
 fn main() -> anyhow::Result<()> {
+	let categories = read_to_string("./categories.txt")?;
+	let categories = categories
+		.trim_end()
+		.split('\n')
+		.collect::<Vec<_>>();
+
+	let pb = ProgressBar::new(categories.len() as u64);
+
 	let collector = Collector {
 		base_url: "https://www.samsung.com".to_owned(),
+		pb: pb.clone(),
 	};
 
-	let v = read_to_string("./categories.txt")?
-		.trim_end()
-		.par_split('\n')
+	let v = categories
+		.par_iter()
+		.progress_with(pb)
 		.flat_map(|req| {
 			collector
 				.parse_goods_list(req)
