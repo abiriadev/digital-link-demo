@@ -11,3 +11,4 @@ digital-link-rs
 /database/init/data.json
 
 .env
+ignored
