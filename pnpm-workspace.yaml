@@ -1,3 +1,4 @@
 packages:
   - resolver
   - digital-link-rs
+  - client
