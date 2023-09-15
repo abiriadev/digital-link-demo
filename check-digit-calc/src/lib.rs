@@ -56,19 +56,21 @@ impl Gtin {
 		Ok((Self::calc_check_digit(&a.map(|b| b - b'0')) + b'0') as char)
 	}
 
-	fn generate() -> Self { Self::generate_with_rng(thread_rng()) }
+	pub fn generate() -> Self { Self::generate_with_rng(thread_rng()) }
 
-	fn generate_with_rng<R: Rng>(mut rng: R) -> Self {
+	pub fn generate_with_rng<R: Rng>(mut rng: R) -> Self {
 		let mut buf: [u8; 14] = [0; 14];
 
 		rng.fill(&mut buf[..13]);
+		buf.iter_mut()
+			.for_each(|b| *b = rng.gen_range(0..10));
 
 		buf[13] = Self::calc_check_digit(&buf[..13].try_into().unwrap());
 
 		Self(buf)
 	}
 
-	fn generate_with_seed(seed: &str) -> Self {
+	pub fn generate_with_seed(seed: &str) -> Self {
 		Self::generate_with_rng(Seeder::from(seed).make_rng::<Pcg64>())
 	}
 }
