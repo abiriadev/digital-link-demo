@@ -10,8 +10,16 @@ struct Arg {
 
 #[derive(Subcommand)]
 enum Commands {
-	Validate { gtin: String },
-	Calc { partial_gtin: String },
+	Validate {
+		gtin: String,
+	},
+	Calc {
+		partial_gtin: String,
+	},
+	Generate {
+		#[arg(short, long)]
+		seed: Option<String>,
+	},
 }
 
 fn main() {
@@ -27,5 +35,13 @@ fn main() {
 				Ok(d) => println!("check digit: {d}"),
 				Err(e) => println!("validation failed. cause: {e}"),
 			},
+		Commands::Generate { seed } => println!(
+			"{}",
+			if let Some(seed) = seed {
+				Gtin::generate_with_seed(&seed)
+			} else {
+				Gtin::generate()
+			}
+		),
 	}
 }
