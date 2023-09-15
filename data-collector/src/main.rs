@@ -12,9 +12,16 @@ fn main() -> anyhow::Result<()> {
 		.split('\n')
 		.collect::<Vec<_>>();
 
-	let res = Collector::serialize(collector.resolve(&categories))?;
+	let products = collector.resolve(&categories);
 
-	write("./products.json", res)?;
+	write(
+		"./products.json",
+		serde_json::to_string(&products)?,
+	)?;
+
+	let entries = Collector::serialize(products)?;
+
+	write("./entries.json", entries)?;
 
 	Ok(())
 }

@@ -1,4 +1,5 @@
 use nipper::Document;
+use serde::Serialize;
 use ureq::Response;
 
 pub mod catalog;
@@ -17,7 +18,7 @@ pub trait ResolveRequest {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Manual {
 	pub name: String,
 	pub href: String,

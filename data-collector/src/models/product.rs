@@ -8,7 +8,7 @@ use super::{
 	catalog::CatalogParserProduct, Manual, ManualRequest, ResolveRequest,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Product {
 	pub model_code: String,
 	// maps to `goodsNm`
