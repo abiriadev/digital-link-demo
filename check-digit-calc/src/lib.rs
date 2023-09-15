@@ -1,3 +1,4 @@
+use rand::{thread_rng, Rng};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -45,6 +46,18 @@ impl Gtin {
 		let a: [u8; 13] = value.as_bytes().try_into().unwrap();
 
 		Ok((Self::calc_check_digit(&a.map(|b| b - b'0')) + b'0') as char)
+	}
+
+	fn generate() -> Self { Self::generate_with_rng(thread_rng()) }
+
+	fn generate_with_rng<R: Rng>(mut rng: R) -> Self {
+		let mut buf: [u8; 14] = [0; 14];
+
+		rng.fill(&mut buf[..13]);
+
+		buf[13] = Self::calc_check_digit(&buf[..13].try_into().unwrap());
+
+		Self(buf)
 	}
 }
 
