@@ -728,6 +728,7 @@ name = "data-collector"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "check-digit-calc",
  "indicatif",
  "nipper",
  "rayon",

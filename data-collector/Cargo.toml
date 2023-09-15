@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.75"
+check-digit-calc = { version = "0.1.0", path = "../check-digit-calc" }
 indicatif = { version = "0.17.6", features = ["rayon"] }
 nipper = "0.1.9"
 rayon = "1.7.0"
