@@ -1,5 +1,6 @@
 use std::iter::once;
 
+use check_digit_calc::Gtin;
 use serde::Serialize;
 
 use super::{
@@ -103,15 +104,17 @@ impl From<Product> for ResolverEntry {
 		Product {
 			model_code,
 			name,
-			image,
+			// image,
 			url,
-			spec,
+			// spec,
 			manuals,
+			..
 		}: Product,
 	) -> Self {
 		Self {
 			identification_key_type: "gtin".to_owned(), // fix
-			identification_key: "12345678901231".to_owned(), // should be generated later
+			identification_key: Gtin::generate_with_seed(&model_code)
+				.to_string(),
 			item_description: name.clone(),
 			qualifier_path: "/".to_owned(), // fix
 			active: true,                   // fix
