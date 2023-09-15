@@ -2,7 +2,7 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum ValidationError {
-	#[error("length does not match")]
+	#[error("GTIN should be 14 characters long")]
 	LengthDoesNotMatch,
 	#[error("all characters should be digits")]
 	NonDigitCharacter,
