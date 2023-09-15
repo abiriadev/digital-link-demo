@@ -1,4 +1,6 @@
 use rand::{thread_rng, Rng};
+use rand_pcg::Pcg64;
+use rand_seeder::Seeder;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -58,6 +60,10 @@ impl Gtin {
 		buf[13] = Self::calc_check_digit(&buf[..13].try_into().unwrap());
 
 		Self(buf)
+	}
+
+	fn generate_with_seed(seed: &str) -> Self {
+		Self::generate_with_rng(Seeder::from(seed).make_rng::<Pcg64>())
 	}
 }
 
