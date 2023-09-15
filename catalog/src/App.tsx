@@ -1,5 +1,6 @@
 import './App.css'
 import data from '../../data-collector/products.json'
+import QRCode from 'react-qr-code'
 
 function App() {
 	return (
@@ -13,6 +14,7 @@ function App() {
 							src={image}
 							width="300px"
 						></img>
+						<QRCode value={url} />
 					</li>
 				))}
 			</ul>
