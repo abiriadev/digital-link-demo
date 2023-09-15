@@ -1,3 +1,9 @@
+use core::fmt;
+use std::{
+	fmt::{Display, Formatter},
+	str::from_utf8_unchecked,
+};
+
 use rand::{thread_rng, Rng};
 use rand_pcg::Pcg64;
 use rand_seeder::Seeder;
@@ -99,6 +105,14 @@ impl TryFrom<&str> for Gtin {
 		}
 
 		Ok(Self(value))
+	}
+}
+
+impl Display for Gtin {
+	fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+		write!(f, "{}", unsafe {
+			from_utf8_unchecked(&self.0.map(|b| b + b'0')[..])
+		})
 	}
 }
 
