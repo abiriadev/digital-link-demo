@@ -19,6 +19,27 @@ impl Gtin {
 				.sum(),
 		)
 	}
+
+	pub fn calc_check_digit_from_str(
+		value: &str,
+	) -> Result<char, ValidationError> {
+		// check length
+		if value.len() != 13 {
+			return Err(ValidationError::LengthDoesNotMatch);
+		}
+
+		// assert that all characters are digits
+		if !value
+			.chars()
+			.all(|c| c.is_ascii_digit())
+		{
+			return Err(ValidationError::NonDigitCharacter);
+		}
+
+		let a: [u8; 13] = value.as_bytes().try_into().unwrap();
+
+		Ok(Self::calc_check_digit(&a.map(|b| b - b'0')) as char)
+	}
 }
 
 impl TryFrom<&str> for Gtin {
