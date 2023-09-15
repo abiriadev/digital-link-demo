@@ -54,7 +54,7 @@ impl Product {
 
 #[derive(Serialize)]
 #[serde(rename_all(serialize = "camelCase"))]
-struct ResolverEntry {
+pub struct ResolverEntry {
 	identification_key_type: String, // "gtin",
 	identification_key: String,      // "00745883713370",
 	item_description: String,        // "M00420020590",
@@ -65,7 +65,7 @@ struct ResolverEntry {
 
 #[derive(Serialize)]
 #[serde(rename_all(serialize = "camelCase"))]
-struct ResolverEntryResponse {
+pub struct ResolverEntryResponse {
 	link_type: String,           // "gs1:pip",
 	iana_language: String,       // "en",
 	context: String,             // "us",

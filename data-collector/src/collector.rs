@@ -5,7 +5,9 @@ use rayon::prelude::{
 };
 
 use crate::models::{
-	catalog::CatalogRequest, product::Product, ResolveRequest,
+	catalog::CatalogRequest,
+	product::{Product, ResolverEntry},
+	ResolveRequest,
 };
 
 #[derive(Debug)]
@@ -38,5 +40,14 @@ impl Collector {
 			})
 			.flatten()
 			.collect::<Vec<_>>()
+	}
+
+	pub fn serialize(result: Vec<Product>) -> serde_json::Result<String> {
+		serde_json::to_string(
+			&result
+				.into_iter()
+				.map(ResolverEntry::from)
+				.collect::<Vec<_>>(),
+		)
 	}
 }
