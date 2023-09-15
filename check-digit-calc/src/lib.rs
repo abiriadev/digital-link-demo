@@ -1,7 +1,13 @@
+use thiserror::Error;
+
+#[derive(Error)]
 pub enum ValidationError {
+	#[error("length does not match")]
 	LengthDoesNotMatch,
+	#[error("all characters should be digits")]
 	NonDigitCharacter,
-	CheckDigitDoesNotMatch,
+	#[error("check digit does not match. correct digit should be: {0}")]
+	CheckDigitDoesNotMatch(u8),
 }
 
 pub struct Gtin([u8; 14]);
@@ -66,9 +72,11 @@ impl TryFrom<&str> for Gtin {
 			.iter_mut()
 			.for_each(|b| *b -= b'0');
 
-		if Self::calc_check_digit(&value[..13].try_into().unwrap()) != value[13]
-		{
-			return Err(ValidationError::CheckDigitDoesNotMatch);
+		let check = Self::calc_check_digit(&value[..13].try_into().unwrap());
+		if check != value[13] {
+			return Err(ValidationError::CheckDigitDoesNotMatch(
+				check,
+			));
 		}
 
 		Ok(Self(value))
