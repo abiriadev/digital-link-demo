@@ -26,9 +26,17 @@ function App() {
 							src={image}
 							width="300px"
 						></img>
-						<QRCode
-							value={`${baseUrl}/01/${gtin}`}
-						/>
+						<div
+							style={{
+								background: '#fff',
+								padding: '16px',
+								display: 'inline-block',
+							}}
+						>
+							<QRCode
+								value={`${baseUrl}/01/${gtin}`}
+							/>
+						</div>
 					</li>
 				))}
 			</ul>
