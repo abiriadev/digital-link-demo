@@ -36,7 +36,9 @@ impl Collector {
 			.map(|c| {
 				c.product_request
 					.into_par_iter()
-					.map(|p| Product::resolve(p, &self.base_url))
+					.map(|p| {
+						Product::resolve(p, &self.base_url, self.pb.clone())
+					})
 			})
 			.flatten()
 			.collect::<Vec<_>>()

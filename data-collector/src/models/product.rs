@@ -1,6 +1,7 @@
 use std::iter::once;
 
 use check_digit_calc::Gtin;
+use indicatif::ProgressBar;
 use serde::Serialize;
 
 use super::{
@@ -32,14 +33,18 @@ impl Product {
 			img_path1,
 		}: CatalogParserProduct,
 		base_url: &str,
+		pb: ProgressBar,
 	) -> Self {
-		let manuals = ManualRequest { mdl_nm, goods_id }.resolve(base_url);
-
-		if manuals.is_ok() {
-			println!("ok: {:#?}", mdl_code);
-		} else {
-			println!("err: {:#?}", mdl_code);
+		let manuals = ManualRequest {
+			mdl_nm: mdl_nm.clone(),
+			goods_id,
 		}
+		.resolve(base_url);
+
+		pb.println(format!(
+			"resolved manuals for {}",
+			mdl_nm
+		));
 
 		Self {
 			model_code: mdl_code,
