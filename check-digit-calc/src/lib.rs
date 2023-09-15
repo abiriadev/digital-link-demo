@@ -1,3 +1,9 @@
+pub enum ValidationError {
+	LengthDoesNotMatch,
+	NonDigitCharacter,
+	CheckDigitDoesNotMatch,
+}
+
 pub struct Gtin([u8; 14]);
 
 impl Gtin {
@@ -16,12 +22,12 @@ impl Gtin {
 }
 
 impl TryFrom<&str> for Gtin {
-	type Error = ();
+	type Error = ValidationError;
 
 	fn try_from(value: &str) -> Result<Self, Self::Error> {
 		// check length
 		if value.len() != 14 {
-			return Err(());
+			return Err(ValidationError::LengthDoesNotMatch);
 		}
 
 		// assert that all characters are digits
@@ -29,7 +35,7 @@ impl TryFrom<&str> for Gtin {
 			.chars()
 			.all(|c| c.is_ascii_digit())
 		{
-			return Err(());
+			return Err(ValidationError::NonDigitCharacter);
 		}
 
 		let mut value =
@@ -41,10 +47,10 @@ impl TryFrom<&str> for Gtin {
 
 		if Self::calc_check_digit(&value[..13].try_into().unwrap()) != value[13]
 		{
-			return Err(());
-		} else {
-			Ok(Self(value))
+			return Err(ValidationError::CheckDigitDoesNotMatch);
 		}
+
+		Ok(Self(value))
 	}
 }
 
