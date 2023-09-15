@@ -1,3 +1,3 @@
 [workspace]
-members = ["data-generator", "resource-provider", "data-collector", "client/src-tauri"]
+members = ["data-generator", "resource-provider", "data-collector", "client/src-tauri", "check-digit-calc"]
 resolver = "2"
