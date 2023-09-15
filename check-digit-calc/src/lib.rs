@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-#[derive(Error)]
+#[derive(Debug, Error)]
 pub enum ValidationError {
 	#[error("length does not match")]
 	LengthDoesNotMatch,
@@ -44,7 +44,7 @@ impl Gtin {
 
 		let a: [u8; 13] = value.as_bytes().try_into().unwrap();
 
-		Ok(Self::calc_check_digit(&a.map(|b| b - b'0')) as char)
+		Ok((Self::calc_check_digit(&a.map(|b| b - b'0')) + b'0') as char)
 	}
 }
 
